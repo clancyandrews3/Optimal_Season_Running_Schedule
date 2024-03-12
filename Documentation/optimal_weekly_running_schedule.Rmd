@@ -1,0 +1,23 @@
+---
+title: "Optimal Weekly Running Schedule"
+author: 
+     - "Clancy Andrews"
+header-includes:
+   - \usepackage{amssymb}
+   - \usepackage{amsmath}
+   - \usepackage{graphicx,float}
+   - \usepackage{natbib}
+   - \usepackage{geometry}
+   - \usepackage{listings}
+   - \usepackage{xcolor}
+   - \usepackage{courier}
+output:
+  pdf_document: default
+fontsize: 12pt
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
