@@ -41,6 +41,8 @@ The project is currently in the proposal phase.
 
 Contained in the `Code` folder is a python file used to solve the linear program. You can run the program in a few different ways.
 
+&nbsp;
+
 ### Terminal
 
 Going to the directory of the python file in a local terminal, you can run the following line to execute it:
@@ -49,9 +51,13 @@ python3 running_linear_program.py
 ```
 and the code will be run.
 
+&nbsp;
+
 ### IDE
 
 In an IDE of your choice, you can run the program using the run functionality of the IDE, given that you have selected the appropriate interpreter.
+
+&nbsp;
 
 ## Results
 
