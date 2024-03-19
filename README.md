@@ -1,4 +1,4 @@
-# Optimal Weekly Running Schedule
+# Optimal Season Running Schedule
 
 <hr>
 
@@ -33,7 +33,12 @@
 ## Progress
 
 
-The project is currently in the proposal phase.
+The project is currently in the modeling phase.
+
+- [] Model Objective Function
+- [] Model Independent/Dependent Variables
+- [] Model Constraints
+- [] Model Program in Python
 
 &nbsp;
 
