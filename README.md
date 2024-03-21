@@ -35,10 +35,10 @@
 
 The project is currently in the modeling phase.
 
-[] Model Objective Function
-[] Model Independent/Dependent Variables
-[] Model Constraints
-[] Model Program in Python
+- [ ] Model Objective Function
+- [ ] Model Independent/Dependent Variables
+- [ ] Model Constraints
+- [ ] Model Program in Python
 
 &nbsp;
 
