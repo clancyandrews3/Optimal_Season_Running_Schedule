@@ -26,7 +26,29 @@
 
 ## Goal
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Our goal is to get as close to the target weekly mileage as we can. We can account for each workout type's total kilometers ran for each day using the decision variables $x_{ij}$ where $i$ corresponds to the $`i`$th day of the week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $`j`$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively. It may also be necessary to add binary decision variables $y_{ij}$ for running a $`j`$th workout type on the $`i`$th day of the week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, and $j$ corresponding to the $`j`$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Our goal is to get as close to the target weekly mileage as we can. This will ensure that no overtraining will occur and we can still improve moving forward.
+
+&nbsp;
+
+## Objective Variables
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We can account for each workout type's total kilometers ran for each day using the decision variables $x_{ij}$ where $i$ corresponds to the $`i`$th day of the week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $`j`$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively. It may also be necessary to add binary decision variables $y_{ij}$ for running a $`j`$th workout type on the $`i`$th day of the week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, and $j$ corresponding to the $`j`$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively. We will also have dependent variables $M^t$ representing the goal total mileage for week $t$. 
+
+&nbsp;
+
+## Objective Function
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given our objective variables above, we can formulate the objective function as follows:
+
+$$\min \ z = \sum_{t=1}^{16}\delta^t$$
+
+where $\delta = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right|$. The goal of the objective function is to minimize the difference of the total mileage run for week $t$ and the goal total mileage of week $t$. Therefore, each week will be as close to the goal mileage as possible.
+
+&nbsp;
+
+## Constraints
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We can model the different constraints stated in the background section using the objective variables.
 
 &nbsp;
 
@@ -35,8 +57,8 @@
 
 The project is currently in the modeling phase.
 
-- [ ] Model Objective Function
-- [ ] Model Independent/Dependent Variables
+- [x] Model Independent/Dependent Variables
+- [x] Model Objective Function
 - [ ] Model Constraints
 - [ ] Model Program in Python
 
@@ -64,6 +86,6 @@ In an IDE of your choice, you can run the program using the run functionality of
 
 &nbsp;
 
-## Results
+## Output
 
 After running the program, the output will display the current feasibility of the linear program. Assuming it is feasible, you should get an optimal point $`x^*`$ and an optimal objective value $`z^*`$ . If the output for $`x^*`$ and $`z^*`$ is `None`, then the linear program is either infeasible or unbounded, and there is no solution.
