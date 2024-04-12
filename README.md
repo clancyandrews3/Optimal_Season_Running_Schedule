@@ -64,9 +64,10 @@ M^t =
 20 \ &\text{ if } \ t = 1 \\
 \left|(1.1)M^{t-1}\right| \ &\text{ otherwise}
 \end{cases}
+$$
 ```
 
-$$
+
 This allows us to set our current week's goal total mileage to a value as close to a $10\%$ increase from the last weeks goal total mileage as possible.
 
 &nbsp;
