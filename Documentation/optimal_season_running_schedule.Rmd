@@ -1,5 +1,5 @@
 ---
-title: "Optimal Weekly Running Schedule"
+title: "Optimal Season Running Schedule"
 author: 
      - "Clancy Andrews"
 header-includes:
@@ -21,3 +21,47 @@ urlcolor: blue
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+\break
+
+\center
+## Introduction
+\raggedright
+
+
+|       As a competitive runner, I wish to optimize my weekly running schedule, allowing me to focus on training and reap the performance benefits. Being busy with work and school as a priority, I don't always have time to sit down and write up a weekly running schedule that will allow me to have the most performance boosting results. Especially when the results of a workout are not determined until after a fortnight. Our goal is to get as close to the target weekly mileage as we can. This will ensure that no overtraining will occur and we can still improve moving forward with training.
+
+## Background
+
+
+|       There are many aspects that go into planning a training schedule for a week. For this instance, the only prior information necessary for us to optimize a week of training is the previous week's total mileage. It is recommended that the total weekly mileage for the current week is only a 10% increase from the previous week's total mileage, to prevent over training and injury. We use the term mileage to indicate the total distance ran during the week, but the units for this distance is in kilometers, since most competitive races are measured using the metric system.  
+
+
+
+|       There are three different types of workouts. Aerobic workouts, which improve the efficiency of the body's cardiovascular system in terms of oxygen intake and internal transportation of oxygen, involve longer runs at an easier pace. Anaerobic workouts, which improve muscle strength and speed, involve short, interval speed workouts, i.e., sprinting. Threshold workouts, which improve lactate levels in the body and prevent the onset of fatigue, involve 3 to 15 kilometer runs with an average heart rate at 80% of the individual's maximum heart rate.
+
+
+
+|       It is typically advised that, of the total weekly mileage, between 60% to 80% should be done doing aerobic workouts. If this is the start of training, starting around 80% will allow an individual to develop an endurance "base". Once the base is built up, the threshold and anaerobic mileage can be increased to gain speed. The longest aerobic run of the week can only account for 30% of the total weekly mileage. Since long runs require more time to do, we want to set our longest run to be either on a Saturday or Sunday during the week. On the day after the long run, we can either do a shorter aerobic workout or have a recovery day. Threshold and anaerobic workouts should account for 10% to 20% of the weekly total mileage each. The longest threshold run of the week should only account for 10% of the total weekly mileage. At most 3 anaerobic workouts should be done during any one week and we cannot do two anaerobic workouts in a row. It is also important to train at least three times a week to see improvement and at most six times a week as to prevent injury. Only one workout of any type should be done per day.
+
+
+
+|       A typical season in track and field or cross country is around 4 months (3 months of normal season and 1 month of nationals in high school) with professional seasons lasting longer. For the average runner, it would be better to do a 4 month training plan so a break can be taken after the 4 months to prevent over training and burnout (as this frequently can happen). It would also be beneficial to taper near the end of the season to better get ready for any big races/competitions that are scheduled. Tapering is the reduction of mileage/running intensity and allows a runner to better prepare their body for competition via additional rest, nutrition, and fine tuning of running form. To start a taper, we can reduce the current mileage by 20% of the previous week's mileage. This will occur for the last 2 weeks of the season.
+
+
+## Objective Variables
+
+|       We can account for each workout type's total kilometers ran for each day using the decision variables $x^t_{ij}$ where $i$ corresponds to the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively; $t$ corresponds to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. It may also be necessary to add binary decision variables $y^t_{ij}$ for running a $j$th workout type on the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, $j$ corresponding to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively, and $t$ corresponding to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. We will also have dependent variables $M^t$ representing the goal total mileage for week $t$. 
+
+
+
+## Objective Function
+
+|       Given our objective variables above, we can formulate the objective function as follows:
+
+$$\min \ z = \sum_{t=1}^{16}\delta^t$$
+
+where 
+
+$$\delta^t = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right|.$$ 
+
+The goal of the objective function is to minimize the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$. Therefore, each week will be as close to the goal mileage as possible.

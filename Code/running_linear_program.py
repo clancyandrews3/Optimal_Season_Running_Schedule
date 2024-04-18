@@ -2,7 +2,7 @@
 # Optimal Season Running Schedule
 # 
 #
-# Last Modified: April 11, 2024
+# Last Modified: April 18, 2024
 # Author: Clancy Andrews
 # Github: https://github.com/clancyandrews3/Optimal_Season_Running_Schedule
 ############################
@@ -16,7 +16,7 @@ def get_starting_mileage():
     """Gets and returns starting mileage from user"""
     
     try:
-        start_mileage = int(input("Enter the starting mileage for training: "))
+        start_mileage = int(input("\nEnter the starting mileage for training: "))
     except:
         ValueError("Value needs to be a number.")
     
@@ -33,12 +33,15 @@ def output_results(results):
 
 if __name__=="__main__":
 
+    dim = 704 #Depends on how many objective variables are in the program
+
     #Get starting milage
     mileage = get_starting_mileage()
-    print(mileage)
+    print(f"\nStarting Mileage (km): {mileage}\n\n")
     
+
     #Objective function
-    c = np.array([])
+    c = np.concatenate((np.zeros((dim-16)),np.ones((16))))
 
     #Inequality and equality constraints
     A = np.array([[]])
@@ -52,4 +55,14 @@ if __name__=="__main__":
     bounds = ()
 
     #Specify integer variables
-    isint = []
+    x_i = [0 for i in range(336)]
+    y_i = [1 for i in range(336)]
+    M_t = [0 for i in range(16)]
+    d = [0 for i in range(16)]
+    isint = x_i + y_i + M_t+d
+
+    #Calculate results
+
+
+    #Output results
+    

@@ -164,4 +164,4 @@ In an IDE of your choice, you can run the program using the run functionality of
 
 ## Output
 
-After running the program, the output will display the current feasibility of the linear program. Assuming it is feasible, you should get an optimal point '$x^*$' and an optimal objective value '$z^*$'. If the output for '$x^*$' and '$z^*$' is `None`, then the linear program is either infeasible or unbounded, and there is no solution.
+After running the program, the output will display the current feasibility of the linear program. Assuming it is feasible, you should get an optimal point 'math $x^*$' and an optimal objective value '$z^*$'. If the output for '$x^*$' and '$z^*$' is `None`, then the linear program is either infeasible or unbounded, and there is no solution.
