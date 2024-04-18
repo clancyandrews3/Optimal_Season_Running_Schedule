@@ -10,7 +10,7 @@
 ## Background
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are many aspects that go into planning a training schedule for a week. For this instance, the only prior information necessary for us to optimize a week of training is the previous week's total mileage. It is recommended that the total weekly mileage for the current week is only a 10% increase from the previous week's total mileage, to prevent over training and injury. We use the term mileage to indicate the total distance ran during the week, but the units for this distance is in meters, since most competitive races are measured using the metric system.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are many aspects that go into planning a training schedule for a week. For this instance, the only prior information necessary for us to optimize a week of training is the previous week's total mileage. It is recommended that the total weekly mileage for the current week is only a 10% increase from the previous week's total mileage, to prevent over training and injury. We use the term mileage to indicate the total distance ran during the week, but the units for this distance is in kilometers, since most competitive races are measured using the metric system.  
 
 
 
@@ -18,7 +18,11 @@
 
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It is typically advised that, of the total weekly mileage, 70% should be done doing aerobic workouts. Threshold workouts should account for 15% of the weekly total mileage and anaerobic workouts 15% of the total weekly mileage. It is also worth noting that the longest aerobic run of the week can only account for 30% of the total weekly mileage. The longest threshold run of the week should only account for 10% of the total weekly mileage. It is also important to train at least three times a week to see improvement and at most six times a week as to prevent injury.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It is typically advised that, of the total weekly mileage, between 60% to 80% should be done doing aerobic workouts. If this is the start of training, starting around 80% will allow an individual to develop an endurance "base". Once the base is built up, the threshold and anaerobic mileage can be increased to gain speed. The longest aerobic run of the week can only account for 30% of the total weekly mileage. Since long runs require more time to do, we want to set our longest run to be either on a Saturday or Sunday during the week. On the day after the long run, we can either do a shorter aerobic workout or have a recovery day. Threshold and anaerobic workouts should account for 10% to 20% of the weekly total mileage each. The longest threshold run of the week should only account for 10% of the total weekly mileage. At most 3 anaerobic workouts should be done during any one week and we cannot do two anaerobic workouts in a row. It is also important to train at least three times a week to see improvement and at most six times a week as to prevent injury. Only one workout of any type should be done per day.
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A typical season in track and field or cross country is around 4 months (3 months of normal season and 1 month of nationals in high school) with professional seasons lasting longer. For the average runner, it would be better to do a 4 month training plan so a break can be taken after the 4 months to prevent over training and burnout (as this frequently can happen). It would also be beneficial to taper near the end of the season to better get ready for any big races/competitions that are scheduled. Tapering is the reduction of mileage/running intensity and allows a runner to better prepare their body for competition via additional rest, nutrition, and fine tuning of running form. To start a taper, we can reduce the current mileage by 20% of the previous week's mileage. This will occur for the last 2 weeks of the season.  
 
 &nbsp;
 
@@ -30,7 +34,7 @@
 
 ## Objective Variables
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We can account for each workout type's total kilometers ran for each day using the decision variables $x^t_{ij}$ where $i$ corresponds to the $'i'$th day of the $'t'$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $'j'$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively; $t$ corresponds to the $'t'$th week where $t = 1,\ldots, 16$ for each week in the four month season. It may also be necessary to add binary decision variables $y^t_{ij}$ for running a $'j'$th workout type on the $'i'$th day of the $'t'$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, $j$ corresponding to the $'j'$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively, and $t$ corresponding to the $'t'$th week where $t = 1,\ldots, 16$ for each week in the four month season. We will also have dependent variables $M^t$ representing the goal total mileage for week $t$. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We can account for each workout type's total kilometers ran for each day using the decision variables $x^t_{ij}$ where $i$ corresponds to the '$i$'th day of the '$t$'th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $'j'$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively; $t$ corresponds to the $'t'$th week where $t = 1,\ldots, 16$ for each week in the four month season. It may also be necessary to add binary decision variables $y^t_{ij}$ for running a $'j'$th workout type on the $'i'$th day of the $'t'$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, $j$ corresponding to the $'j'$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively, and $t$ corresponding to the $'t'$th week where $t = 1,\ldots, 16$ for each week in the four month season. We will also have dependent variables $M^t$ representing the goal total mileage for week $t$. 
 
 &nbsp;
 
@@ -57,6 +61,7 @@ $$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}+\delta^t \le -M^t$$
 and
 $$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-\delta^t \le -M^t.$$
 These constraints allow us to relate the objective function to the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$. In order for us to use $M^t$ to represent the $'t'$th week's goal total mileage, we must have a starting goal mileage for the season. Our current implementation gets the starting mileage in kilometers from the user before solving the linear program. In our case, our starting mileage will be $20 \ km$. We then get the following constraints:
+
 ```math
 $$
 M^t = 
@@ -66,9 +71,38 @@ M^t =
 \end{cases}
 $$
 ```
+This allows us to set our current week's goal total mileage to a value as close to a 10% increase from the last weeks goal total mileage as possible.
 
 
-This allows us to set our current week's goal total mileage to a value as close to a $10\%$ increase from the last weeks goal total mileage as possible.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We can now construct the constraints for each running type. We can start with aerobic workouts. 
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The constraints for anerobic workouts are a bit different than for the aerobic workouts. We are only allowed to do at most 3 anerobic workouts a week. We have the following constraint to limit us to that:
+$$\sum_{i=1}^7y_{i2}^t \le 3.$$
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For threshold workouts, we have a couple different set of constraints. First, any threshold run we do must be between 3 and 15 kilometers. We get the following constraints to represent this:
+$$x^t_{i3} -15y^t_{i3} \le 0$$
+and
+$$-x^t_{i3} +3y^t_{i3} \le 0.$$
+
+We also have that the total threshold mileage must be at around 10% of the total weekly mileage goal for each week $t$. We then have
+$$\left|\sum_{i=1}^7x^t_{i3}-(0.1)M^t\right|$$
+which results in
+$$yes$$
+and
+$$no.$$
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the rest of the constraints, we have
+$$3\le\sum_{i=1}^7\sum_{j=1}^3y_{ij}^t \le 6$$
+so we run at least 3 times a week and at most 6 times a week. There is also the constraint that stops us from doing more than one run a day:
+$$\sum_{j=1}^3y_{ij}^t \le 1$$
+for each day $i$ of each week $t$.
 
 &nbsp;
 
@@ -130,4 +164,4 @@ In an IDE of your choice, you can run the program using the run functionality of
 
 ## Output
 
-After running the program, the output will display the current feasibility of the linear program. Assuming it is feasible, you should get an optimal point $'x^*'$ and an optimal objective value $'z^*'$. If the output for $'x^*'$ and $'z^*'$ is `None`, then the linear program is either infeasible or unbounded, and there is no solution.
+After running the program, the output will display the current feasibility of the linear program. Assuming it is feasible, you should get an optimal point '$x^*$' and an optimal objective value '$z^*$'. If the output for '$x^*$' and '$z^*$' is `None`, then the linear program is either infeasible or unbounded, and there is no solution.
