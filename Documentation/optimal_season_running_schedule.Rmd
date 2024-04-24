@@ -30,8 +30,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 |       As a competitive runner, I wish to optimize my weekly running schedule, allowing me to focus on training and reap the performance benefits. Being busy with work and school as a priority, I don't always have time to sit down and write up a weekly running schedule that will allow me to have the most performance boosting results. Especially when the results of a workout are not determined until after a fortnight. Our goal is to get as close to the target weekly mileage as we can. This will ensure that no overtraining will occur and we can still improve moving forward with training.
 
+\center
 ## Background
-
+\raggedright
 
 |       There are many aspects that go into planning a training schedule for a week. For this instance, the only prior information necessary for us to optimize a week of training is the previous week's total mileage. It is recommended that the total weekly mileage for the current week is only a 10% increase from the previous week's total mileage, to prevent over training and injury. We use the term mileage to indicate the total distance ran during the week, but the units for this distance is in kilometers, since most competitive races are measured using the metric system.  
 
@@ -47,14 +48,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 |       A typical season in track and field or cross country is around 4 months (3 months of normal season and 1 month of nationals in high school) with professional seasons lasting longer. For the average runner, it would be better to do a 4 month training plan so a break can be taken after the 4 months to prevent over training and burnout (as this frequently can happen). It would also be beneficial to taper near the end of the season to better get ready for any big races/competitions that are scheduled. Tapering is the reduction of mileage/running intensity and allows a runner to better prepare their body for competition via additional rest, nutrition, and fine tuning of running form. To start a taper, we can reduce the current mileage by 20% of the previous week's mileage. This will occur for the last 2 weeks of the season.
 
-
+\center
 ## Objective Variables
+\raggedright
 
-|       We can account for each workout type's total kilometers ran for each day using the decision variables $x^t_{ij}$ where $i$ corresponds to the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively; $t$ corresponds to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. It may also be necessary to add binary decision variables $y^t_{ij}$ for running a $j$th workout type on the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, $j$ corresponding to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively, and $t$ corresponding to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. We will also have dependent variables $M^t$ representing the goal total mileage for week $t$. 
+|       We can account for each workout type's total kilometers ran for each day using the decision variables $x^t_{ij}$ where $i$ corresponds to the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively; $t$ corresponds to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. It may also be necessary to add binary decision variables $y^t_{ij}$ for running a $j$th workout type on the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, $j$ corresponding to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively, and $t$ corresponding to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. We will also have variables that are in place of constants that will be calculated after the user's input, or are dynamically determined by the stage in training. One such is $M^t$, representing the goal total mileage for week $t$. Another is $r^t_j$ representing the ratio a run can be of the total weekly mileage of week $t$ for workout type $j$. 
 
 
-
+\center
 ## Objective Function
+\raggedright
 
 |       Given our objective variables above, we can formulate the objective function as follows:
 
@@ -64,4 +67,99 @@ where
 
 $$\delta^t = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right|.$$ 
 
-The goal of the objective function is to minimize the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$. Therefore, each week will be as close to the goal mileage as possible.
+The goal of the objective function is to minimize the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$ ($M^t$). Therefore, each week will be as close to the goal mileage as possible.
+
+
+\center
+## Constraints
+\raggedright
+
+|       We can model the different constraints stated in the background section using the objective variables. We can start my relating the dependent variables stated above to the independent variables. For the $\delta^t$ values, we have
+$$\delta^t = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right|$$
+which when linearized, result in the following constraints:
+$$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}+\delta^t \le -M^t$$
+and
+$$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-\delta^t \le -M^t.$$
+These constraints allow us to relate the objective function to the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$. In order for us to use $M^t$ to represent the $t$th week's goal total mileage, we must have a starting goal mileage for the season. Our current implementation gets the starting mileage in kilometers from the user before solving the linear program. In our case, our starting mileage will be $20 \ km$. We then get the following constraints:
+
+$$
+M^t = 
+\begin{cases}
+20 \ &\text{ if } \ t = 1 \\
+\left|(1.1)M^{t-1}\right| &\text{ if }\ \forall t = 2,\ldots,14 \\
+\end{cases}
+$$
+
+If $t = 15,16$, then we will change the $1.1$ value to $0.8$ to account for tapering at the end of the season. This allows us to set our current week's goal total mileage to a value as close to a 10% increase from the last weeks goal total mileage as possible and taper at the end. To use $r_j^t$ to represent the ratio a run can be of the total weekly mileage of week $t$ for workout type $j$, we have 
+$$
+\begin{aligned}
+r^t_1 &= 0.80 \qquad \forall t = 1, \ldots , 4 \\ 
+r^t_1 &= 0.75 \qquad \forall t = 5, \ldots , 8 \\
+r^t_1 &= 0.70 \qquad \forall t = 9, \ldots , 12 \\
+r^t_1 &= 0.65 \qquad \forall t = 13, \ldots , 14 \\
+r^t_1 &= 0.60 \qquad \forall t = 15, \ldots , 16.
+\end{aligned}
+$$
+Both anerobic and threshold workouts will have the same ratios between them, with 
+$$
+\begin{aligned}
+r^t_j &= 0.100 \qquad \forall t = 1, \ldots , 4   \qquad \forall j = 2,3  \\ 
+r^t_j &= 0.125 \qquad \forall t = 5, \ldots , 8   \qquad \forall j = 2,3   \\
+r^t_j &= 0.150 \qquad \forall t = 9, \ldots , 12  \qquad \forall j = 2,3  \\
+r^t_j &= 0.175 \qquad \forall t = 13, \ldots , 14 \qquad \forall j = 2,3   \\
+r^t_j &= 0.200 \qquad \forall t = 15, \ldots , 16 \qquad \forall j = 2,3  .
+\end{aligned}
+$$
+Using those ratios will allow us to update the ratio of each workout type as we gear towards more speed at the end of the season.
+
+
+|       We can now construct the constraints for each running type. We can start with aerobic workouts. Our first constraint is that the total aerobic mileage per week has to be as close to $r^t_1$ percent of the total mileage for week $t$. In this case, $r^1_1 = 0.80$ and will decrease to $r^{16}_1 = 0.60$ step-wise over the 16 weeks as stated above. We get the following constraints to represent this:
+$$
+\begin{aligned}
+-\sum_{i = 1}^7x^t_{i1}-\alpha^t &\le -(r^t_1)M^t \\
+-\sum_{i = 1}^7x^t_{i1}+\alpha^t &\le -(r^t_1)M^t \\
+\end{aligned}
+$$
+where
+$$\alpha^t = \left|\sum_{i = 1}^7x^t_{i1}-(r^t_1)M^t\right|.$$
+We also have the constraint where the longest aerobic run of the week cannot exceed 30% of the total weekly mileage:
+$$x_{i1}^t \le (0.3)M^t.$$
+To only do the long run on a weekend (Saturday or Sunday), we need to introduce a new binary variable $\omega^t_i$ that indicates which day $i$ we do our longest aerobic run during week $t$. 
+
+
+|       The constraints for anerobic workouts are a bit different than for the aerobic workouts. We are only allowed to do at most 3 anerobic workouts a week. We have the following constraint to limit us to that:
+$$\sum_{i=1}^7y_{i2}^t \le 3.$$
+We are not allowed to do two consecutive anerobic workouts, resulting in the constraint
+$$y^t_{i2}+y^t_{(i+1)2} \le 1.$$
+Lastly, the total anerobic mileage must be around 10% of the total weekly mileage at the start of the season and will end at 20% near the end of the season. We have
+$$\beta^t =\left|\sum_{i=1}^7x^t_{i2}-(r^t_2)M^t\right|$$
+which results in
+$$-\sum_{i=1}^7x^t_{i2}+\beta^t \le-(r^t_2)M^t$$
+and
+$$-\sum_{i=1}^7x^t_{i2}-\beta^t \le -(r^t_2)M^t.$$
+
+
+|       For threshold workouts, we have a couple different set of constraints. First, any threshold run we do must be between 3 and 15 kilometers. We get the following constraints to represent this:
+$$x^t_{i3} -15y^t_{i3} \le 0$$
+and
+$$-x^t_{i3} +3y^t_{i3} \le 0.$$
+
+We also have that the total threshold mileage must be at around 10% of the total weekly mileage goal for each week $t$ and will increase to 20% by the end of the season. We then have
+$$\gamma^t =\left|\sum_{i=1}^7x^t_{i3}-(r^t_3)M^t\right|$$
+which results in
+$$-\sum_{i=1}^7x^t_{i3}+\gamma^t \le-(r^t_3)M^t$$
+and
+$$-\sum_{i=1}^7x^t_{i3}-\gamma^t \le -(r^t_3)M^t.$$
+
+
+|       For the rest of the constraints, we have
+$$3\le\sum_{i=1}^7\sum_{j=1}^3y_{ij}^t \le 6$$
+so we run at least 3 times a week and at most 6 times a week. There is also the constraint that stops us from doing more than one run a day:
+$$\sum_{j=1}^3y_{ij}^t \le 1$$
+for each day $i$ of each week $t$. Using the constraint presented above, when can implement the linear program via software and solve to determine the result.
+
+\center
+## Results
+\raggedright
+
+|       The linear program was implemented in `Python` using the `numpy` and `scipy` packages. 
