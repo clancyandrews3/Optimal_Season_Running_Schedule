@@ -189,7 +189,15 @@ if __name__=="__main__":
 
     
 
-    # 
+    #Aerobic runs must be at most twice the total goal mileage
+    for t in range(16):
+        for _ in range(7):
+            x = [1,0,0]
+            y = [-2*M[t],0,0]
+            next_row = np.concatenate((np.zeros(3*t),x,np.zeros(336-3-(3*t)),np.zeros(3*t),y,np.zeros(336-3-(3*t)),np.zeros(64)))
+
+            A = np.vstack([A,next_row])
+            b.append(0)
 
     ############### End Aerobic Constraints ####################
 
@@ -237,6 +245,15 @@ if __name__=="__main__":
         A = np.vstack([A,next_row])
         b.append(1)
 
+    #Anerobic runs must be at most 10 kilometers total
+    for t in range(16*7):
+        x = [0,1,0]
+        y = [0,-10,0]
+        next_row = np.concatenate((np.zeros(3*t),x,np.zeros(336-3-(3*t)),np.zeros(3*t),y,np.zeros(336-3-(3*t)),np.zeros(64)))
+
+        A = np.vstack([A,next_row])
+        b.append(0)
+
     ############### End Anerobic Constraints ###################
 
 
@@ -276,6 +293,17 @@ if __name__=="__main__":
     for t in range(16):
         for _ in range(7):
             b.append(0.1*M[t])
+
+
+    
+    #Threshold runs must be at most 15 kilometers
+    for t in range(16*7):
+        x = [0,0,1]
+        y = [0,0,-15]
+        next_row = np.concatenate((np.zeros(3*t),x,np.zeros(336-3-(3*t)),np.zeros(3*t),y,np.zeros(336-3-(3*t)),np.zeros(64)))
+
+        A = np.vstack([A,next_row])
+        b.append(0)
 
     ############### End Threshold Constraints ##################
 
