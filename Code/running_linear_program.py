@@ -2,7 +2,7 @@
 # Optimal Season Running Schedule
 # 
 #
-# Last Modified: April 25, 2024
+# Last Modified: April 26, 2024
 # Author: Clancy Andrews
 # Github: https://github.com/clancyandrews3/Optimal_Season_Running_Schedule
 ############################
@@ -17,7 +17,7 @@ def get_starting_mileage():
     
     while True:
         try:
-            start_mileage = int(input("\nEnter the starting mileage for training: "))
+            start_mileage = int(input("\nEnter the starting mileage for training (km): "))
             break
         except ValueError:
             print("Value needs to be a number.")
@@ -35,47 +35,47 @@ def output_results(results):
 
     #Variables needed for output
     week = 1
-    days = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"}
+    days = {1: "Monday   ", 2: "Tuesday  ", 3: "Wednesday", 4: "Thursday ", 5: "Friday   ", 6: "Saturday ", 7: "Sunday   "}
     workout_type = []
     current_day = []
     distance = []
 
+    #Set days of the week
+    for i in range(7):
+        current_day.append(days[i % 7 + 1])
+
     #Iterate over results vector and get schedule information; print for user
-    for i in range(0,336,3):
+    for i in range(0,336,21):
 
         #Print week results and update week to next week
-        if i % 7 == 0:
-            print("")
-            week += 1
-            print("\n\n")
+        print(f"Week {week}")
+        print("".join("-" for _ in range(60)))
+        workout_type = []
+        distance = []
 
-            #Reset lists for next week
-            workout_type = []
-            current_day = []
-            distance = []
+        # Check workout types and distances for the current week
+        for j in range(i, i + 21, 3):  # Increment by 3 to get each day
+            current_day = days[(j % 21) // 3 + 1]
 
-        #Set current day from dictionary
-        current_day.append(days[(i%7)+1])
+            # Check workout type for the current day
+            if results[j + y_index[0]] == 1:
+                workout_type = "Aerobic Workout "
+                distance = results[j]
+            elif results[j + y_index[0] + 1] == 1:
+                workout_type = "Anaerobic Workout"
+                distance = results[j + 1]
+            elif results[j + y_index[0] + 2] == 1:
+                workout_type = "Threshold Workout"
+                distance = results[j + 2]
+            else:
+                workout_type = "No Workout      "
+                distance = 0
 
-        #Check if run aerobic on day i
-        if results[i+y_index[0]] == 1:
-            workout_type.append("Aerobic Workout")
-            distance.append(results[i])
+            print(f"{current_day}:\t  {workout_type}\t  {distance} km")
+        print("\n")
+        week += 1
 
-        #Check if run anerobic on day i
-        elif results[(i+1)+y_index[0]] == 1:
-            workout_type.append("Anerobic Workout")
-            distance.append(results[(i+1)])
 
-        #Check if run threshold on day i
-        elif results[(i+2)+y_index[0]] == 1:
-            workout_type.append("Threshold Workout")
-            distance.append(results[(i+2)])
-
-        
-def print_matrix(A):
-    for i in A:
-        print(i)
 
 
 if __name__=="__main__":
@@ -178,26 +178,18 @@ if __name__=="__main__":
 
 
     #Longest aerobic run no longer than 30% total goal mileage
+    current_goal_mileage_aerobic = []
+    for t in range(16):
+        for i in range(7):
+            current_goal_mileage_aerobic.append(-round(0.3*M[t],1))
+
     for t in range(16*7):
-        next_row = np.concatenate((np.zeros(3*t),np.array([1]),np.zeros(336-(3*t)-1),np.zeros(dim-336)))
+        x = [1,0,0]
+        y = [current_goal_mileage_aerobic[t],0,0]
+        next_row = np.concatenate((np.zeros(3*t),x,np.zeros(336-3-(3*t)),np.zeros(3*t),y,np.zeros(336-3-(3*t)),np.zeros(64)))
 
         A = np.vstack([A,next_row])
-
-    for t in range(16):
-        for _ in range(7):
-            b.append(0.3*M[t])
-
-    
-
-    #Aerobic runs must be at most twice the total goal mileage
-    for t in range(16):
-        for _ in range(7):
-            x = [1,0,0]
-            y = [-2*M[t],0,0]
-            next_row = np.concatenate((np.zeros(3*t),x,np.zeros(336-3-(3*t)),np.zeros(3*t),y,np.zeros(336-3-(3*t)),np.zeros(64)))
-
-            A = np.vstack([A,next_row])
-            b.append(0)
+        b.append(0)
 
     ############### End Aerobic Constraints ####################
 
@@ -240,15 +232,21 @@ if __name__=="__main__":
 
     #Cannot do two consecutive anerobic workouts
     for t in range(16*7):
-        next_row = np.concatenate((np.zeros(336),np.zeros(t),np.array([1,1]),np.zeros(336-t-2),np.zeros(64)))
+        x = [0,1,0]*2
+        next_row = np.concatenate((np.zeros(336),np.zeros(t),x,np.zeros(336-(t)-6),np.zeros(64)))
 
         A = np.vstack([A,next_row])
         b.append(1)
 
-    #Anerobic runs must be at most 10 kilometers total
+    #Anerobic runs must be at most 10% of total weekly goal mileage
+    current_goal_mileage_anerobic = []
+    for t in range(16):
+        for i in range(7):
+            current_goal_mileage_anerobic.append(-round(0.1*M[t],1))
+
     for t in range(16*7):
         x = [0,1,0]
-        y = [0,-10,0]
+        y = [0,current_goal_mileage_anerobic[t],0]
         next_row = np.concatenate((np.zeros(3*t),x,np.zeros(336-3-(3*t)),np.zeros(3*t),y,np.zeros(336-3-(3*t)),np.zeros(64)))
 
         A = np.vstack([A,next_row])
@@ -261,7 +259,7 @@ if __name__=="__main__":
 
     ############### Start Threshold Constraints ################
 
-    #Total weekly aerobic mileage 0.8-0.6 of total weekly mileage
+    #Total weekly threshold mileage 0.1-0.2 of total weekly mileage
     for t in range(16):
 
         x = [0,0,-1]*7
@@ -283,16 +281,19 @@ if __name__=="__main__":
 
 
 
-    #Longest threshold run no longer than 10% total goal mileage
+    #Longest threshold run no longer than 20% total goal mileage
+    current_goal_mileage_threshold = []
+    for t in range(16):
+        for i in range(7):
+            current_goal_mileage_threshold.append(-round(0.2*M[t],1))
+
     for t in range(16*7):
-        next_row = np.concatenate((np.zeros(3*t+2),np.array([1]),np.zeros(336-(3*t)-1-2),np.zeros(dim-336)))
-        print(next_row)
+        x = [0,0,1]
+        y = [0,0,current_goal_mileage_threshold[t]]
+        next_row = np.concatenate((np.zeros(3*t),x,np.zeros(336-3-(3*t)),np.zeros(3*t),y,np.zeros(336-3-(3*t)),np.zeros(64)))
 
         A = np.vstack([A,next_row])
-
-    for t in range(16):
-        for _ in range(7):
-            b.append(0.1*M[t])
+        b.append(0)
 
 
     
@@ -315,13 +316,13 @@ if __name__=="__main__":
     #Between 3 and 6 runs per week
     for t in range(16):
         y = [1]*21
-        next_row = np.concatenate((np.zeros(336+(21*t)),y,np.zeros(dim-336-21-(21*t))))
+        next_row = np.concatenate((np.zeros(336),np.zeros(21*t),y,np.zeros(336-(21*t)-21),np.zeros(64)))
         A = np.vstack([A,next_row])
         b.append(6)
 
     for t in range(16):
         y = [-1]*21
-        next_row = np.concatenate((np.zeros(336+(21*t)),y,np.zeros(dim-336-21-(21*t))))
+        next_row = np.concatenate((np.zeros(336),np.zeros(21*t),y,np.zeros(336-(21*t)-21),np.zeros(64)))
         A = np.vstack([A,next_row])
         b.append(-3)
 
@@ -330,7 +331,7 @@ if __name__=="__main__":
     #Only one run a day
     for t in range(16*7):
         y = [1,1,1]
-        next_row = np.concatenate((np.zeros(336+(3*t)),y,np.zeros(397-(3*t))))
+        next_row = np.concatenate((np.zeros(336),np.zeros(3*t),y,np.zeros(336-(3*t)-3),np.zeros(64)))
         A = np.vstack([A,next_row])
         b.append(1)
 
@@ -345,9 +346,9 @@ if __name__=="__main__":
 
 
     #Determine bounds
-    bounds = [(0,np.inf) for _ in range(336)]
-    bounds.extend((0,1) for _ in range(336))
-    bounds.extend((0,np.inf) for _ in range(64))
+    bounds = [(0,np.inf) for _ in range(336)] #x_i
+    bounds.extend((0,1) for _ in range(336)) #y_i
+    bounds.extend((0,np.inf) for _ in range(64)) #alpha,beta,gamma,delta
 
 
 
@@ -366,7 +367,20 @@ if __name__=="__main__":
     results=opt.linprog(c,A,b,None,None,bounds,integrality = isint)
 
 
-    print(A.shape)
+
     #Output results
-    print(f"Optimal Objective Value (z): {results['fun']}")
-    print(f"Optimal Decision Variable Vector (x): {results['x']}\n\n")
+    if results['fun'] == None:
+        print("No Solution")
+        print(results.message, end = "\n\n")
+    else:
+        while True:
+            try:
+                output_style = input("\nWould you like the clean/readable output style? (y/n) ").strip().lower()
+                if output_style == 'y':
+                    output_results(results['x'])
+                else:
+                    print(f"Optimal Objective Value (z): {results['fun']}")
+                    print(f"Optimal Decision Variable Vector (x): {results['x']}\n\n")
+                break
+            except ValueError:
+                print("Please enter 'y' or 'n'.")
