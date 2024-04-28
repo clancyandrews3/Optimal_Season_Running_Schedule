@@ -77,7 +77,7 @@ $$\min \ z = \sum_{t=1}^{16}\delta^t$$
 
 where 
 
-$$\delta^t = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right|.$$ 
+$$\delta^t = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right| \qquad \forall t = 1,\ldots ,16.$$ 
 
 The goal of the objective function is to minimize the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$ ($M^t$). Therefore, each week will be as close to the goal mileage as possible.
 
@@ -87,11 +87,11 @@ The goal of the objective function is to minimize the difference of the total mi
 \raggedright
 
 |       We can model the different constraints stated in the background section using the objective variables. We can start my relating the dependent variables stated above to the independent variables. For the $\delta^t$ values, we have
-$$\delta^t = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right|$$
+$$\delta^t = \left|\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-M^t\right| \qquad \forall t = 1,\ldots ,16$$
 which when linearized, result in the following constraints:
-$$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}+\delta^t \le -M^t$$
+$$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}+\delta^t \le -M^t \qquad \forall t = 1,\ldots ,16$$
 and
-$$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-\delta^t \le -M^t.$$
+$$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-\delta^t \le -M^t \qquad \forall t = 1,\ldots ,16.$$
 These constraints allow us to relate the objective function to the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$. In order for us to use $M^t$ to represent the $t$th week's goal total mileage, we must have a starting goal mileage for the season. Our current implementation gets the starting mileage in kilometers from the user before solving the linear program. In our case, our starting mileage will be $20 \ km$. We then get the following constraints:
 
 $$
@@ -128,49 +128,49 @@ Using those ratios will allow us to update the ratio of each workout type as we 
 |       We can now construct the constraints for each running type. We can start with aerobic workouts. Our first constraint is that the total aerobic mileage per week has to be as close to $r^t_1$ percent of the total mileage for week $t$. In this case, $r^1_1 = 0.80$ and will decrease to $r^{16}_1 = 0.60$ step-wise over the 16 weeks as stated above. We get the following constraints to represent this:
 $$
 \begin{aligned}
--\sum_{i = 1}^7x^t_{i1}-\alpha^t &\le -(r^t_1)M^t \\
--\sum_{i = 1}^7x^t_{i1}+\alpha^t &\le -(r^t_1)M^t \\
+-\sum_{i = 1}^7x^t_{i1}-\alpha^t &\le -(r^t_1)M^t  \qquad \forall t = 1,\ldots ,16\\
+-\sum_{i = 1}^7x^t_{i1}+\alpha^t &\le -(r^t_1)M^t  \qquad \forall t = 1,\ldots ,16\\
 \end{aligned}
 $$
 where
-$$\alpha^t = \left|\sum_{i = 1}^7x^t_{i1}-(r^t_1)M^t\right|.$$
+$$\alpha^t = \left|\sum_{i = 1}^7x^t_{i1}-(r^t_1)M^t\right| \qquad \forall t = 1,\ldots ,16.$$
 We also have the constraint where the longest aerobic run of the week cannot exceed 30% of the total weekly mileage:
-$$x_{i1}^t - (0.3)M^ty^t_{i1} \le 0.$$
+$$x_{i1}^t - (0.3)M^ty^t_{i1} \le 0 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1, \ldots, 7.$$
 With these constraints, we can build an endurance base as well as strength for longer runs, further preventing injury.
 
 
 |       The constraints for anerobic workouts are a bit different than for the aerobic workouts. We are only allowed to do at most 3 anerobic workouts a week. We have the following constraint to limit us to that:
-$$\sum_{i=1}^7y_{i2}^t \le 3.$$
+$$\sum_{i=1}^7y_{i2}^t \le 3 \qquad \forall t = 1,\ldots ,16.$$
 Taking the sum of anerobic runs for each day of week $t$ and restricting it to be less than or equal to 3 is how we can successfully limit the total weekly anerobic runs. We are not allowed to do two consecutive anerobic workouts, resulting in the constraint
-$$y^t_{i2}+y^t_{(i+1)2} \le 1.$$
+$$y^t_{i2}+y^t_{(i+1)2} \le 1 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1, \ldots , 7.$$
 The total anerobic mileage must be around 10% of the total weekly mileage at the start of the season and will end at 20% near the end of the season. We have
-$$\beta^t =\left|\sum_{i=1}^7x^t_{i2}-(r^t_2)M^t\right|$$
+$$\beta^t =\left|\sum_{i=1}^7x^t_{i2}-(r^t_2)M^t\right| \qquad \forall t = 1,\ldots ,16$$
 which results in
-$$-\sum_{i=1}^7x^t_{i2}+\beta^t \le-(r^t_2)M^t$$
+$$-\sum_{i=1}^7x^t_{i2}+\beta^t \le-(r^t_2)M^t \qquad \forall t = 1,\ldots ,16$$
 and
-$$-\sum_{i=1}^7x^t_{i2}-\beta^t \le -(r^t_2)M^t.$$
+$$-\sum_{i=1}^7x^t_{i2}-\beta^t \le -(r^t_2)M^t \qquad \forall t = 1,\ldots ,16.$$
 Lastly, the longest anerobic workout session cannot be longer than 10% of the total goal weekly mileage. We have
-$$x^t_{i2} - (0.1)M^ty^t_{i2} \le 0.$$
+$$x^t_{i2} - (0.1)M^ty^t_{i2} \le 0 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1, \ldots , 7.$$
 With these constraints in place, we will be able to get faster while not sacrificing our endurance base in the process.
 
 
 |       For threshold workouts, we have a couple different set of constraints. First, any threshold run we do must be at most 15 kilometers long. We get the following constraint to represent this:
-$$x^t_{i3} -15y^t_{i3} \le 0.$$
+$$x^t_{i3} -15y^t_{i3} \le 0 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1, \ldots, 7.$$
 We also have that the total threshold mileage must be at around 10% of the total weekly mileage goal for each week $t$ and will increase to 20% by the end of the season. We then have
-$$\gamma^t =\left|\sum_{i=1}^7x^t_{i3}-(r^t_3)M^t\right|$$
+$$\gamma^t =\left|\sum_{i=1}^7x^t_{i3}-(r^t_3)M^t\right| \qquad \forall t = 1,\ldots ,16$$
 which results in
-$$-\sum_{i=1}^7x^t_{i3}+\gamma^t \le-(r^t_3)M^t$$
+$$-\sum_{i=1}^7x^t_{i3}+\gamma^t \le-(r^t_3)M^t \qquad \forall t = 1,\ldots ,16$$
 and
-$$-\sum_{i=1}^7x^t_{i3}-\gamma^t \le -(r^t_3)M^t.$$
+$$-\sum_{i=1}^7x^t_{i3}-\gamma^t \le -(r^t_3)M^t \qquad \forall t = 1,\ldots ,16.$$
 Lastly, similar to the aerobic constraint for maximum distance a run can be based on weekly mileage, the longest threshold run cannot exceed 10% of the total weekly mileage. By setting the constraint where the threshold mileage for any day $i$ of week $t$ to be less than or equal to 20% of the corresponding goal weekly mileage $M^t$, we get
-$$x^t_{i3} - (0.2)M^ty^t_{i3} \le 0.$$
+$$x^t_{i3} - (0.2)M^ty^t_{i3} \le 0 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1, \ldots , 7.$$
 Having these constraints will allow us to increase our tolerance to the onset of fatigue while running, and assist in our body's ability to combine our endurance and speed for competition.
 
 |       For the rest of the constraints, we have
-$$3\le\sum_{i=1}^7\sum_{j=1}^3y_{ij}^t \le 6$$
+$$3\le\sum_{i=1}^7\sum_{j=1}^3y_{ij}^t \le 6 \qquad \forall t = 1,\ldots ,16$$
 so we run at least 3 times a week and at most 6 times a week. There is also the constraint that stops us from doing more than one run a day:
-$$\sum_{j=1}^3y_{ij}^t \le 1$$
-for each day $i$ of each week $t$. Using the constraint presented above, when can implement the mixed integer program via software and solve to determine the result.
+$$\sum_{j=1}^3y_{ij}^t \le 1 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1,\ldots, 7.$$
+Using the constraint presented above, when can implement the mixed integer program via software and solve to determine the result.
 
 \center
 ## Results
