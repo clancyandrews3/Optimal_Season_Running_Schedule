@@ -29,9 +29,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 |       The goal of this project is to create a fast and easy way for an individual to curate a running schedule that allows them to train for competition. There are three different types of workouts. Aerobic workouts, which improve the efficiency of the body's cardiovascular system in terms of oxygen intake and internal transportation of oxygen, involve longer runs at an easier pace. Anaerobic workouts, which improve muscle strength and speed, involve short, interval speed workouts, i.e., sprinting. Threshold workouts, which improve lactate levels in the body and prevent the onset of fatigue, involve 3 to 15 kilometer runs with an average heart rate at 80% of the individual's maximum heart rate. To determine an optimal solution to the project, our goal was to minimize summation of the differences between the total mileage ran and the goal mileage for each of the corresponding weeks in the competitive season. 
 
-|       This project had many constraints. We had to start with allocating around 80% of the total weekly mileage to aerobic workouts, with the rest of the mileage getting split between anerobic and threshold workouts. The longest aerobic run could not exceed more than 30% of the total weekly mileage. We could not do two consecutive anerobic workouts, and no more than 3 anerobic workouts in one week. If we do a threshold workout, it has to be between 3 and 15 kilometers. We wanted to do 3 to 6 workouts a week and only one workout a day as most individuals do not have time to do more than one workout a day. With these being some of the constraints in the project, we were able to model them and use computer software to determine an optimal solution for a seasonal running schedule.
+|       This project had many constraints. We had to start with allocating around 80% of the total weekly mileage to aerobic workouts, with the rest of the mileage getting split between anerobic and threshold workouts. The longest aerobic run could not exceed more than 30% of the total weekly mileage. We could not do two consecutive anerobic workouts, and no more than 3 anerobic workouts in one week. If we do a threshold workout, it has to be at most 15 kilometers. We wanted to do 3 to 6 workouts a week and only one workout a day as most individuals do not have time to do more than one workout a day. With these being some of the constraints in the project, we were able to model them and use computer software to determine an optimal solution for a seasonal running schedule.
 
-|       We were able to determine an optimal schedule, which follows:
+|       We were able to determine an optimal schedule, where we can model a season schedule up to 24 kilometers as the starting mileage provided by the user. Any starting mileage provided by the user that is over 24 kilometers renders the mixed integer program infeasible with the current constraints. However, for any runner who wants to start above 20 kilometers for a season should look into a more constrained training schedule as there are constraints not present in this model that will more greatly impact their results from training. Beginners will benefit more using this program to build their training schedules. The optimal season running schedule for a starting mileage of $20 \ km$ is provided on the last page of this report. 
 
 \break
 
@@ -135,7 +135,7 @@ $$
 where
 $$\alpha^t = \left|\sum_{i = 1}^7x^t_{i1}-(r^t_1)M^t\right|.$$
 We also have the constraint where the longest aerobic run of the week cannot exceed 30% of the total weekly mileage:
-$$x_{i1}^t \le (0.3)M^t.$$
+$$x_{i1}^t - (0.3)M^ty^t_{i1} \le 0.$$
 With these constraints, we can build an endurance base as well as strength for longer runs, further preventing injury.
 
 
@@ -143,38 +143,42 @@ With these constraints, we can build an endurance base as well as strength for l
 $$\sum_{i=1}^7y_{i2}^t \le 3.$$
 Taking the sum of anerobic runs for each day of week $t$ and restricting it to be less than or equal to 3 is how we can successfully limit the total weekly anerobic runs. We are not allowed to do two consecutive anerobic workouts, resulting in the constraint
 $$y^t_{i2}+y^t_{(i+1)2} \le 1.$$
-Lastly, the total anerobic mileage must be around 10% of the total weekly mileage at the start of the season and will end at 20% near the end of the season. We have
+The total anerobic mileage must be around 10% of the total weekly mileage at the start of the season and will end at 20% near the end of the season. We have
 $$\beta^t =\left|\sum_{i=1}^7x^t_{i2}-(r^t_2)M^t\right|$$
 which results in
 $$-\sum_{i=1}^7x^t_{i2}+\beta^t \le-(r^t_2)M^t$$
 and
 $$-\sum_{i=1}^7x^t_{i2}-\beta^t \le -(r^t_2)M^t.$$
+Lastly, the longest anerobic workout session cannot be longer than 10% of the total goal weekly mileage. We have
+$$x^t_{i2} - (0.1)M^ty^t_{i2} \le 0.$$
 With these constraints in place, we will be able to get faster while not sacrificing our endurance base in the process.
 
 
-|       For threshold workouts, we have a couple different set of constraints. First, any threshold run we do must be between 3 and 15 kilometers. We get the following constraints to represent this:
-$$x^t_{i3} -15y^t_{i3} \le 0$$
-and
-$$-x^t_{i3} +3y^t_{i3} \le 0.$$
-
+|       For threshold workouts, we have a couple different set of constraints. First, any threshold run we do must be at most 15 kilometers long. We get the following constraint to represent this:
+$$x^t_{i3} -15y^t_{i3} \le 0.$$
 We also have that the total threshold mileage must be at around 10% of the total weekly mileage goal for each week $t$ and will increase to 20% by the end of the season. We then have
 $$\gamma^t =\left|\sum_{i=1}^7x^t_{i3}-(r^t_3)M^t\right|$$
 which results in
 $$-\sum_{i=1}^7x^t_{i3}+\gamma^t \le-(r^t_3)M^t$$
 and
 $$-\sum_{i=1}^7x^t_{i3}-\gamma^t \le -(r^t_3)M^t.$$
-Lastly, similar to the aerobic constraint for maximum distance a run can be based on weekly mileage, the longest threshold run cannot exceed 10% of the total weekly mileage. By setting the constraint where the threshold mileage for any day $i$ of week $t$ to be less than or equal to 0.1 of the corresponding goal weekly mileage $M^t$, we get
-$$x^t_{i3} \le (0.1)M^t.$$
+Lastly, similar to the aerobic constraint for maximum distance a run can be based on weekly mileage, the longest threshold run cannot exceed 10% of the total weekly mileage. By setting the constraint where the threshold mileage for any day $i$ of week $t$ to be less than or equal to 20% of the corresponding goal weekly mileage $M^t$, we get
+$$x^t_{i3} - (0.2)M^ty^t_{i3} \le 0.$$
 Having these constraints will allow us to increase our tolerance to the onset of fatigue while running, and assist in our body's ability to combine our endurance and speed for competition.
 
 |       For the rest of the constraints, we have
 $$3\le\sum_{i=1}^7\sum_{j=1}^3y_{ij}^t \le 6$$
 so we run at least 3 times a week and at most 6 times a week. There is also the constraint that stops us from doing more than one run a day:
 $$\sum_{j=1}^3y_{ij}^t \le 1$$
-for each day $i$ of each week $t$. Using the constraint presented above, when can implement the linear program via software and solve to determine the result.
+for each day $i$ of each week $t$. Using the constraint presented above, when can implement the mixed integer program via software and solve to determine the result.
 
 \center
 ## Results
 \raggedright
 
-|       The linear program was implemented in `Python` using the `numpy` and `scipy` packages. 
+|       The mixed integer program was implemented in `Python` using the `numpy` and `scipy` packages. We were able to determine an optimal schedule, where we can model a season schedule up to 24 kilometers as the starting mileage provided by the user. Any starting mileage provided by the user that is over 24 kilometers renders the mixed integer program infeasible with the current constraints. However, for any runner who wants to start above 20 kilometers for a season should look into a more constrained training schedule as there are constraints not present in this model that will more greatly impact their results from training. Beginners will benefit more using this program to build their training schedules. The optimal season running schedule for a starting mileage of $20 \ km$ is provided on the next page. For further interest in the program and for instructions on running the code for yourself, the documentation and source code can be found on the Github page [https://github.com/clancyandrews3/Optimal_Season_Running_Schedule/tree/main](https://github.com/clancyandrews3/Optimal_Season_Running_Schedule/tree/main).
+
+\break
+
+### Optimal Season Running Schedule ($\mathbf{20 \ km}$)
+
