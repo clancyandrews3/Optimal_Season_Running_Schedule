@@ -29,9 +29,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 |       The goal of this project is to create a fast and easy way for an individual to curate a running schedule that allows them to train for competition. There are three different types of workouts. Aerobic workouts, which improve the efficiency of the body's cardiovascular system in terms of oxygen intake and internal transportation of oxygen, involve longer runs at an easier pace. Anaerobic workouts, which improve muscle strength and speed, involve short, interval speed workouts, i.e., sprinting. Threshold workouts, which improve lactate levels in the body and prevent the onset of fatigue, involve 3 to 15 kilometer runs with an average heart rate at 80% of the individual's maximum heart rate. To determine an optimal solution to the project, our goal was to minimize summation of the differences between the total mileage ran and the goal mileage for each of the corresponding weeks in the competitive season. 
 
-|       This project had many constraints. We had to start with allocating around 80% of the total weekly mileage to aerobic workouts, with the rest of the mileage getting split between anerobic and threshold workouts. The longest aerobic run could not exceed more than 30% of the total weekly mileage. We could not do two consecutive anerobic workouts, and no more than 3 anerobic workouts in one week. If we do a threshold workout, it has to be at most 15 kilometers. We wanted to do 3 to 6 workouts a week and only one workout a day as most individuals do not have time to do more than one workout a day. With these being some of the constraints in the project, we were able to model them and use computer software to determine an optimal solution for a seasonal running schedule.
+|       This project had many constraints. We had to start with allocating around 80% of the total weekly mileage to aerobic workouts, with the rest of the mileage getting split between anaerobic and threshold workouts. The longest aerobic run could not exceed more than 30% of the total weekly mileage. We could not do two consecutive anaerobic workouts, and no more than 3 anaerobic workouts in one week. If we do a threshold workout, it has to be at most 15 kilometers. We wanted to do 3 to 6 workouts a week and only one workout a day as most individuals do not have time to do more than one workout a day. With these being some of the constraints in the project, we were able to model them and use computer software to determine an optimal solution for a seasonal running schedule.
 
-|       We were able to determine an optimal schedule, where we can model a season schedule up to 24 kilometers as the starting mileage provided by the user. Any starting mileage provided by the user that is over 24 kilometers renders the mixed integer program infeasible with the current constraints. However, for any runner who wants to start above 20 kilometers for a season should look into a more constrained training schedule as there are constraints not present in this model that will more greatly impact their results from training. Beginners will benefit more using this program to build their training schedules. The optimal season running schedule for a starting mileage of $20 \ km$ is provided on the last page of this report. 
+|       We were able to determine an optimal schedule, where we can model a season schedule up to 24 kilometers as the starting mileage provided by the user. Any starting mileage provided by the user that is over 24 kilometers renders the mixed integer program infeasible with the current constraints. However, for any runner who wants to start above 20 kilometers for a season should look into a more constrained training schedule as there are constraints not present in this model that will more greatly impact their results from training. Beginners will benefit more using this program to build their training schedules. The optimal season running schedule for a starting mileage of $20 \ km$ is provided on the last two pages of this report. 
 
 \break
 
@@ -64,7 +64,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Objective Variables
 \raggedright
 
-|       We can account for each workout type's total kilometers ran for each day using the decision variables $x^t_{ij}$ where $i$ corresponds to the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively; $j$ corresponds to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively; $t$ corresponds to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. It may also be necessary to add binary decision variables $y^t_{ij}$ for running a $j$th workout type on the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday, respectively, $j$ corresponding to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively, and $t$ corresponding to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. We will also have variables that are in place of constants that will be calculated after the user's input, or are dynamically determined by the stage in training. One such is $M^t$, representing the goal total mileage for week $t$. Another is $r^t_j$ representing the ratio a run can be of the total weekly mileage of week $t$ for workout type $j$. 
+|       We can account for each workout type's total kilometers ran for each day using the decision variables $x^t_{ij}$ where $i$ corresponds to the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, and Sunday, respectively; $j$ corresponds to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively; $t$ corresponds to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. It may also be necessary to add binary decision variables $y^t_{ij}$ for running a $j$th workout type on the $i$th day of the $t$th week for $i = 1,2,3,4,5,6,7$ representing Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, and Sunday, respectively, $j$ corresponding to the $j$th workout type for $j = 1,2,3$ representing aerobic, anaerobic, and threshold, respectively, and $t$ corresponding to the $t$th week where $t = 1,\ldots, 16$ for each week in the four month season. We will also have variables that are in place of constants that will be calculated after the user's input, or are dynamically determined by the stage in training. One such is $M^t$, representing the goal total mileage for week $t$. Another is $r^t_j$ representing the ratio a run can be of the total weekly mileage of week $t$ for workout type $j$. 
 
 
 \center
@@ -92,7 +92,7 @@ which when linearized, result in the following constraints:
 $$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}+\delta^t \le -M^t \qquad \forall t = 1,\ldots ,16$$
 and
 $$-\sum_{i = 1}^7\sum_{j=1}^3x^t_{ij}-\delta^t \le -M^t \qquad \forall t = 1,\ldots ,16.$$
-These constraints allow us to relate the objective function to the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$. In order for us to use $M^t$ to represent the $t$th week's goal total mileage, we must have a starting goal mileage for the season. Our current implementation gets the starting mileage in kilometers from the user before solving the linear program. In our case, our starting mileage will be $20 \ km$. We then get the following constraints:
+These constraints allow us to relate the objective function to the difference of the total mileage ran for week $t$ and the goal total mileage of week $t$. In order for us to use $M^t$ to represent the $t$th week's goal total mileage, we must have a starting goal mileage for the season. Our current implementation gets the starting mileage in kilometers from the user before solving the mixed integer program. In our case, our starting mileage will be $20 \ km$. We then get the following constraints:
 
 $$
 M^t = 
@@ -112,7 +112,7 @@ r^t_1 &= 0.65 \qquad \forall t = 13, \ldots , 14 \\
 r^t_1 &= 0.60 \qquad \forall t = 15, \ldots , 16.
 \end{aligned}
 $$
-Both anerobic and threshold workouts will have the same ratios between them, with 
+Both anaerobic and threshold workouts will have the same ratios between them, with 
 $$
 \begin{aligned}
 r^t_j &= 0.100 \qquad \forall t = 1, \ldots , 4   \qquad \forall j = 2,3  \\ 
@@ -139,17 +139,17 @@ $$x_{i1}^t - (0.3)M^ty^t_{i1} \le 0 \qquad \forall t = 1,\ldots ,16 \qquad \fora
 With these constraints, we can build an endurance base as well as strength for longer runs, further preventing injury.
 
 
-|       The constraints for anerobic workouts are a bit different than for the aerobic workouts. We are only allowed to do at most 3 anerobic workouts a week. We have the following constraint to limit us to that:
+|       The constraints for anaerobic workouts are a bit different than for the aerobic workouts. We are only allowed to do at most 3 anaerobic workouts a week. We have the following constraint to limit us to that:
 $$\sum_{i=1}^7y_{i2}^t \le 3 \qquad \forall t = 1,\ldots ,16.$$
-Taking the sum of anerobic runs for each day of week $t$ and restricting it to be less than or equal to 3 is how we can successfully limit the total weekly anerobic runs. We are not allowed to do two consecutive anerobic workouts, resulting in the constraint
+Taking the sum of anaerobic runs for each day of week $t$ and restricting it to be less than or equal to 3 is how we can successfully limit the total weekly anaerobic runs. We are not allowed to do two consecutive anaerobic workouts, resulting in the constraint
 $$y^t_{i2}+y^t_{(i+1)2} \le 1 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1, \ldots , 7.$$
-The total anerobic mileage must be around 10% of the total weekly mileage at the start of the season and will end at 20% near the end of the season. We have
+The total anaerobic mileage must be around 10% of the total weekly mileage at the start of the season and will end at 20% near the end of the season. We have
 $$\beta^t =\left|\sum_{i=1}^7x^t_{i2}-(r^t_2)M^t\right| \qquad \forall t = 1,\ldots ,16$$
 which results in
 $$-\sum_{i=1}^7x^t_{i2}+\beta^t \le-(r^t_2)M^t \qquad \forall t = 1,\ldots ,16$$
 and
 $$-\sum_{i=1}^7x^t_{i2}-\beta^t \le -(r^t_2)M^t \qquad \forall t = 1,\ldots ,16.$$
-Lastly, the longest anerobic workout session cannot be longer than 10% of the total goal weekly mileage. We have
+Lastly, the longest anaerobic workout session cannot be longer than 10% of the total goal weekly mileage. We have
 $$x^t_{i2} - (0.1)M^ty^t_{i2} \le 0 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1, \ldots , 7.$$
 With these constraints in place, we will be able to get faster while not sacrificing our endurance base in the process.
 
@@ -170,15 +170,122 @@ Having these constraints will allow us to increase our tolerance to the onset of
 $$3\le\sum_{i=1}^7\sum_{j=1}^3y_{ij}^t \le 6 \qquad \forall t = 1,\ldots ,16$$
 so we run at least 3 times a week and at most 6 times a week. There is also the constraint that stops us from doing more than one run a day:
 $$\sum_{j=1}^3y_{ij}^t \le 1 \qquad \forall t = 1,\ldots ,16 \qquad \forall i = 1,\ldots, 7.$$
-Using the constraint presented above, when can implement the mixed integer program via software and solve to determine the result.
+Using the constraints presented above, when can implement the mixed integer program via software and solve to determine the result.
 
 \center
 ## Results
 \raggedright
 
-|       The mixed integer program was implemented in `Python` using the `numpy` and `scipy` packages. We were able to determine an optimal schedule, where we can model a season schedule up to 24 kilometers as the starting mileage provided by the user. Any starting mileage provided by the user that is over 24 kilometers renders the mixed integer program infeasible with the current constraints. However, for any runner who wants to start above 20 kilometers for a season should look into a more constrained training schedule as there are constraints not present in this model that will more greatly impact their results from training. Beginners will benefit more using this program to build their training schedules. The optimal season running schedule for a starting mileage of $20 \ km$ is provided on the next page. For further interest in the program and for instructions on running the code for yourself, the documentation and source code can be found on the Github page [https://github.com/clancyandrews3/Optimal_Season_Running_Schedule/tree/main](https://github.com/clancyandrews3/Optimal_Season_Running_Schedule/tree/main).
+|       The mixed integer program was implemented in `Python` using the `numpy` and `scipy` packages. We were able to determine an optimal schedule, where we can model a season schedule up to 24 kilometers as the starting mileage provided by the user. Any starting mileage provided by the user that is over 24 kilometers renders the mixed integer program infeasible with the current constraints. However, for any runner who wants to start above 20 kilometers for a season should look into a more constrained training schedule as there are constraints not present in this model that will more greatly impact their results from training. Beginners will benefit more using this program to build their training schedules. The optimal season running schedule for a starting mileage of $20 \ km$ is provided on the next two pages. For further interest in the program and for instructions on running the code for yourself, the documentation and source code can be found on the Github page [https://github.com/clancyandrews3/Optimal_Season_Running_Schedule](https://github.com/clancyandrews3/Optimal_Season_Running_Schedule).
 
 \break
 
-### Optimal Season Running Schedule ($\mathbf{20 \ km}$)
+\center
 
+$$
+\begin{tabular}{|*{4}{p{0.23\textwidth}|}}
+\hline
+\textbf{Week 1} & \textbf{Week 2} & \textbf{Week 3} & \textbf{Week 4} \\
+\hline
+\textbf{Monday} & \textbf{Monday} & \textbf{Monday} & \textbf{Monday} \\ 
+Aerobic Workout & No Workout & Anaerobic Workout & Aerobic Workout \\
+6.0 km & 0 km & 2.0 km & 8.0 km \\
+\textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} \\ 
+Anaerobic Workout & Aerobic Workout & Aerobic Workout & Anaerobic Workout \\
+2.0 km & 6.6 km & 7.3 km & 2.7 km \\
+\textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} \\ 
+No Workout & Anaerobic Workout & No Workout & No Workout \\
+0 km & 2.2 km & 0 km & 0 km \\
+\textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} \\ 
+Threshold Workout & Threshold Workout & Aerobic Workout & Aerobic Workout \\
+4.0 km & 4.4 km & 7.3 km & 8.0 km \\
+\textbf{Friday} & \textbf{Friday} & \textbf{Friday} & \textbf{Friday} \\ 
+Aerobic Workout & Aerobic Workout & Threshold Workout & No Workout \\
+6.0 km & 6.6 km & 4.8 km & 0 km \\
+\textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} \\
+No Workout & No Workout & Aerobic Workout & Threshold Workout \\
+0 km & 0 km & 7.3 km & 5.3 km \\
+\textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} \\
+Aerobic Workout &  Aerobic Workout & No Workout &  Aerobic Workout \\
+6.0 km &  6.6 km &  0 km &  8.0 km \\
+\hline
+\textbf{Week 5} & \textbf{Week 6} & \textbf{Week 7} & \textbf{Week 8} \\
+\hline
+\textbf{Monday} & \textbf{Monday} & \textbf{Monday} & \textbf{Monday} \\ 
+Anaerobic Workout & Threshold Workout & Aerobic Workout & Aerobic Workout \\
+2.9 km & 6.4 km & 10.6 km & 11.7 km \\
+\textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} \\ 
+Aerobic Workout & Anaerobic Workout & Anaerobic Workout & Anaerobic Workout \\
+8.8 km & 3.2 km & 3.5 km & 3.9 km \\
+\textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} \\ 
+Anaerobic Workout & Aerobic Workout & Anaerobic Workout & Aerobic Workout \\
+2.9 km & 9.7 km & 3.5 km & 11.7 km \\
+\textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} \\ 
+No Workout & Anaerobic Workout & No Workout & Anaerobic Workout \\
+0 km & 3.2 km & 0 km & 3.9 km \\
+\textbf{Friday} & \textbf{Friday} & \textbf{Friday} & \textbf{Friday} \\ 
+Aerobic Workout & No Workout & Aerobic Workout & Aerobic Workout \\
+8.8 km & 0 km & 10.6 km & 11.7 km \\
+\textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} \\
+Threshold Workout & Aerobic Workout & Threshold Workout & No Workout \\
+5.9 km & 9.7 km & 7.1 km & 0 km \\
+\textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} \\
+Aerobic Workout &  Aerobic Workout & Aerobic Workout & Threshold Workout \\
+8.8 km & 9.7 km & 10.6 km & 7.8 km \\
+\hline
+\end{tabular}
+$$
+\break
+$$
+\begin{tabular}{|*{4}{p{0.23\textwidth}|}}
+\hline
+\textbf{Week 9} & \textbf{Week 10} & \textbf{Week 11} & \textbf{Week 12} \\
+\hline
+\textbf{Monday} & \textbf{Monday} & \textbf{Monday} & \textbf{Monday} \\ 
+Aerobic Workout & Aerobic Workout & Aerobic Workout & Aerobic Workout \\
+12.8 km & 14.1 km & 15.5 km & 17.1 km \\
+\textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} \\ 
+No Workout & No Workout & Anaerobic Workout & Anaerobic Workout \\
+0 km & 0 km & 5.2 km & 5.7 km \\
+\textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} \\ 
+Threshold Workout & Aerobic Workout & Threshold Workout & Threshold Workout \\
+8.6 km & 14.1 km & 10.4 km & 11.4 km \\
+\textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} \\ 
+Anaerobic Workout & Anaerobic Workout & Aerobic Workout & Aerobic Workout \\
+4.3 km & 4.7 km & 15.5 km & 17.1 km \\
+\textbf{Friday} & \textbf{Friday} & \textbf{Friday} & \textbf{Friday} \\ 
+Aerobic Workout & Aerobic Workout & No Workout & Aerobic Workout \\
+12.8 km & 14.1 km & 0 km & 17.1 km \\
+\textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} \\
+Aerobic Workout & Threshold Workout & Anaerobic Workout & Anaerobic Workout \\
+12.8 km & 9.4 km & 5.2 km & 5.7 km \\
+\textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} \\
+Anaerobic Workout & Anaerobic Workout & Aerobic Workout & No Workout \\
+4.3 km & 4.7 km & 15.5 km & 0 km \\
+\hline
+\textbf{Week 13} & \textbf{Week 14} & \textbf{Week 15} & \textbf{Week 16} \\
+\hline
+\textbf{Monday} & \textbf{Monday} & \textbf{Monday} & \textbf{Monday} \\ 
+Anaerobic Workout & Threshold Workout & No Workout & Anaerobic Workout \\
+6.3 km & 13.8 km & 0 km & 4.4 km \\
+\textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} & \textbf{Tuesday} \\ 
+Aerobic Workout & No Workout & Aerobic Workout & No Workout \\
+18.8 km & 0 km & 16.6 km & 0 km \\
+\textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} & \textbf{Wednesday} \\ 
+Threshold Workout & Aerobic Workout & No Workout & Threshold Workout \\
+12.5 km & 20.7 km & 0 km & 8.8 km \\
+\textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} & \textbf{Thursday} \\ 
+Aerobic Workout & Aerobic Workout & Aerobic Workout & Aerobic Workout \\
+18.8 km & 20.7 km & 16.6 km & 13.3 km \\
+\textbf{Friday} & \textbf{Friday} & \textbf{Friday} & \textbf{Friday} \\ 
+Aerobic Workout & Anaerobic Workout & Anaerobic Workout & No Workout \\
+18.8 km & 6.9 km & 5.5 km & 0 km \\
+\textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} & \textbf{Saturday} \\
+No Workout & Anaerobic Workout & Threshold Workout & Anaerobic Workout \\
+0 km & 6.9 km & 11.0 km & 4.4 km \\
+\textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} & \textbf{Sunday} \\
+Anaerobic Workout & Aerobic Workout & Anaerobic Workout & Aerobic Workout \\
+6.3 km & 20.7 km & 5.5 km & 13.3 km \\
+\hline
+\end{tabular}
+$$
