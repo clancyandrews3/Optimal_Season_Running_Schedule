@@ -110,27 +110,30 @@ for each day $i$ of each week $t$.
 
 &nbsp;
 
-### Interpreting Results
+### Interpreting Clean Results
 
 &nbsp;
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The results will generally be output in a more user friendly matter. To better understand the output from the solution of the linear program, the output vector $x^*$ will be as follows:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The results presented in the clean output style will make it more easy to understand what is going on. Each week will present each day's workout type and number of kilometers to run. That way there is no difficulty in interpretation, allowing you to focus on training.
+
+&nbsp;
+
+### Interpreting Raw Results
+
+&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The results for the non-clean output style can be a bit confusing, so it would be preferred to use the clean output style for a more user friendly method. To better understand the output from the solution of the mixed integer program, the output vector $x^*$ will be as follows:
 ```math
 $$ x^* = \begin{bmatrix}x^1_{11} & x^1_{12} & x^1_{13} & x^1_{21} & x^1_{22} & x^1_{23} & x^1_{31} & \cdots & y^1_{11} & y^1_{12} & y^1_{13} & y^1_{21} & \cdots & M^1 & M^2 & \cdots & M^{16} & \delta^1 & \delta^2 & \cdots & \delta^{16}\end{bmatrix} $$
 ```
-There are a total of $704$ components to the $x^*$ vector. The first $336$ components are the $x^t_{ij}$ values. They are presented as each workout type for each day of the first week, then the three workout types for the second day of the first week, and so on through all 112 days of the 16 week season. The second group of $336$ components ($337 - 672$) are the $y^t_{ij}$ values. The are presented in the same way that the $x^t_{ij}$ components are. Components $673 - 688$ are the goal total weekly mileage values for each of the 16 weeks. The last set of components ($689-704$) are the values of $\delta^t$. The $\delta$ values are utilized in linearizing the objective function, allowing us to solve the problem as a linear program.
+There are a total of $736$ components to the $x^*$ vector. The first $336$ components are the $x^t_{ij}$ values. They are presented as each workout type for each day of the first week, then the three workout types for the second day of the first week, and so on through all 112 days of the 16 week season. The second group of $336$ components ($337 - 672$) are the $y^t_{ij}$ values. The are presented in the same way that the $x^t_{ij}$ components are. Components $673 - 688, 689 - 704, 705 - 720$ are the dependent variables $\alpha, \ \beta, \ \gamma$, used to linearize the functions that get the aerobic, anaerobic, and threshold weekly totals as close to their respective ratios of total goal weekly mileage. The last set of components ($721-704$) are the values of $\delta^t$. The $\delta$ values are utilized in linearizing the objective function, allowing us to solve the problem as a linear program.
 
 &nbsp;
 
 ## Progress
 
 
-The project is currently in the modeling phase.
-
-- [x] Model Independent/Dependent Variables
-- [x] Model Objective Function
-- [x] Model Output
-- [ ] Model Constraints
+The project is completed as of version 1.
 
 &nbsp;
 
